@@ -1,9 +1,9 @@
 use serde::{ Serialize, Deserialize };
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Kana {
-    kana: String,
-    roumaji: String,
+    pub kana: String,
+    pub roumaji: String,
     score: f64,
     kanatype: String,
 }
