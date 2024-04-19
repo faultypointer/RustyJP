@@ -1,5 +1,6 @@
 use crate::utils;
 use crate::item::Kana;
+use crate::item_test;
 use std::fs::File;
 use std::io::BufReader;
 use serde_json::from_reader;
@@ -51,12 +52,26 @@ impl App {
                     match utils::menu_input() {
                         1 => utils::kana_table(&self.hiragana),
                         2 => utils::kana_table(&self.katakana),
-                        3 => todo!(),
+                        3 => self.state = AppState::KanaTest,
                         4 => self.state = AppState::Home,
                         _ => utils::invalid_input(),
                     }
-                }
-                _ => todo!(),
+                },
+                AppState::KanaTest => {
+                    utils::kana_test_menu();
+                    match utils::menu_input() {
+                        1 => item_test::kana_test(&mut self.hiragana),
+                        2 => item_test::kana_test(&mut self.katakana),
+                        3 => {
+                            let mut both = self.hiragana.clone();
+                            both.append(&mut self.katakana.clone());
+                            item_test::kana_test(&mut both);
+                        },
+                        4 => self.state = AppState::Home,
+                        _ => utils::invalid_input(),
+                    }
+                },
+                // _ => todo!(),
             }
         }
     }

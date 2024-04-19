@@ -24,8 +24,6 @@ pub fn home_menu() {
     println!("3. Kanji");
     println!("4. Kanji Test");
     println!("5. Exit");
-
-    println!("\n|> ");
 }
 
 pub fn kana_menu() {
@@ -34,11 +32,18 @@ pub fn kana_menu() {
     println!("2. View Katakana Table");
     println!("3. Test");
     println!("4. Back");
-    println!("\n|> ");
 }
 
+pub fn kana_test_menu() {
+    clear().unwrap();
+    println!("1. Hiragana");
+    println!("2. Katakana");
+    println!("3. Both");
+    println!("4. Back");
+}
 
 pub fn menu_input() -> i8 {
+    println!("\n|> ");
     let mut buff = String::new();
     io::stdin()
         .read_line(&mut buff)
