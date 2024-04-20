@@ -1,9 +1,8 @@
 use crate::utils;
-use crate::item::Kana;
+use crate::item::{ Kana, Item };
 use crate::item_test;
 use std::fs::File;
-use std::io::BufReader;
-use serde_json::from_reader;
+use std::io::{ BufReader };
 
 pub enum AppState {
     Home,
@@ -30,8 +29,8 @@ impl App {
         Self {
             state: AppState::Home,
             is_open: true,
-            hiragana: from_reader(hira_reader).expect("Error while parsing hiragana json"),
-            katakana: from_reader(kata_reader).expect("Error while parsing katakana json"),
+            hiragana: serde_json::from_reader(hira_reader).expect("Error while parsing hiragana json"),
+            katakana: serde_json::from_reader(kata_reader).expect("Error while parsing katakana json"),
         }
     }
     pub fn run(&mut self) {
@@ -43,31 +42,41 @@ impl App {
                         1 => self.state = AppState::Kana,
                         2 => self.state = AppState::KanaTest,
                         // 3 | 4 => todo!(),
-                        5 => self.is_open = false,
+                        0 => self.is_open = false,
                         _ => utils::invalid_input(),
                     }
                 },
                 AppState::Kana => {
                     utils::kana_menu();
                     match utils::menu_input() {
-                        1 => utils::kana_table(&self.hiragana),
-                        2 => utils::kana_table(&self.katakana),
+                        1 => utils::print_kana_table(&self.hiragana),
+                        2 => utils::print_kana_table(&self.katakana),
                         3 => self.state = AppState::KanaTest,
-                        4 => self.state = AppState::Home,
+                        4 => utils::kana_score(&mut self.hiragana),
+                        5 => utils::kana_score(&mut self.katakana),
+                        0 => self.state = AppState::Home,
                         _ => utils::invalid_input(),
                     }
                 },
                 AppState::KanaTest => {
                     utils::kana_test_menu();
                     match utils::menu_input() {
-                        1 => item_test::kana_test(&mut self.hiragana),
-                        2 => item_test::kana_test(&mut self.katakana),
+                        1 => {
+                            item_test::kana_test(&mut self.hiragana);
+                            utils::write_json(&self.hiragana, Item::Hira);
+                        },
+                        2 => {
+                            item_test::kana_test(&mut self.katakana);
+                            utils::write_json(&self.katakana, Item::Kata);
+                        },
                         3 => {
                             let mut both = self.hiragana.clone();
                             both.append(&mut self.katakana.clone());
                             item_test::kana_test(&mut both);
+                            utils::write_json(&self.hiragana, Item::Hira);
+                            utils::write_json(&self.katakana, Item::Kata);
                         },
-                        4 => self.state = AppState::Home,
+                        0 => self.state = AppState::Home,
                         _ => utils::invalid_input(),
                     }
                 },
