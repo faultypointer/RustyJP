@@ -2,7 +2,7 @@ use crate::utils;
 use crate::item::{ Kana, Item };
 use crate::item_test;
 use std::fs::File;
-use std::io::{ BufReader };
+use std::io::BufReader;
 
 pub enum AppState {
     Home,
