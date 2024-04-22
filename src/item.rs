@@ -9,6 +9,16 @@ pub struct Kana {
     kanatype: String,
 }
 
+#[derive(Serialize, Deserialize)]
+pub struct Kanji {
+    pub kanji: String,
+    pub onyomi: Vec<String>,
+    pub kunyomi: Vec<String>,
+    pub meanings: Vec<String>,
+    pub sentences: Vec<String>,
+    pub score: f64,
+}
+
 pub enum Item {
     Hira,
     Kata,
