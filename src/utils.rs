@@ -1,6 +1,6 @@
-use crate::item::{ Kana, Item };
+use crate::item::{ Item, ItemType, Kana, Kanji};
 use std::fs::File;
-use std::io::{ BufWriter };
+use std::io::BufWriter;
 use std::io;
 use clearscreen::clear;
 
@@ -46,6 +46,16 @@ pub fn kana_test_menu() {
     println!("0. Back");
 }
 
+pub fn kanji_menu() {
+    clear().unwrap();
+    println!("1. View Kanji");
+    println!("2. Add Kanji");
+    println!("3. Remove Kanji");
+    println!("4. Kanji Test");
+    println!("5. View Kanji Score");
+    println!("0. Back");
+}
+
 pub fn menu_input() -> i8 {
     println!("\n|> ");
     let mut buff = String::new();
@@ -76,6 +86,26 @@ pub fn print_kana_table(kana_table: &[Kana]) {
 
 }
 
+pub fn print_kanji_table(kanji_table: &[Kanji]) {
+    for (i, item) in kanji_table.iter().enumerate() {
+        println!("\n{}: {}", i+1, item.kanji);
+        print!("onyomi: ");
+        for onyo in item.onyomi.iter() {
+            print!("{} ", onyo);
+        }
+        print!("\nkunyomi: ");
+        for kunyo in item.kunyomi.iter() {
+            print!("{} ", kunyo);
+        }
+        print!("\nmeanings: ");
+        for mean in item.meanings.iter() {
+            print!("{} ", mean);
+        }
+        println!();
+    }
+    stall();
+}
+
 pub fn kana_score(kana_table: &mut [Kana]) {
     kana_table.sort();
     for item in kana_table.iter() {
@@ -102,11 +132,69 @@ pub fn input_test_size() -> u8 {
     }
 }
 
-pub fn write_json(kana_table: &Vec<Kana>, item: Item) {
+pub fn add_kanji(kanji_table: &mut Vec<Kanji>) {
+    // Kanji bn
+    let mut kanji = String::new();
+    let mut on: Vec<String> = Vec::new();
+    let mut kun: Vec<String> = Vec::new();
+    let mut mean: Vec<String> = Vec::new();
+    let mut sent: Vec<String> = Vec::new();
+    println!("Enter the kanji:");
+    io::stdin().read_line(&mut kanji).expect("Error reading input");
+    kanji = String::from(kanji.trim());
+    println!("Enter the onyomi readings");
+    get_vec_string_input(&mut on);
+    println!("Enter the kunyomi readings");
+    get_vec_string_input(&mut kun);
+    println!("Enter the meaning readings");
+    get_vec_string_input(&mut mean);
+    println!("Enter the sentences with the kanji: ");
+    get_vec_string_input(&mut sent);
+    kanji_table.push( Kanji {
+        kanji,
+        onyomi: on,
+        kunyomi: kun,
+        meanings: mean,
+        sentences: sent,
+        score: -10.0,
+    });
+
+}
+
+fn get_vec_string_input(vector: &mut Vec<String>) {
+    loop {
+        let mut buff = String::new();
+        io::stdin().read_line(&mut buff).expect("Error reading input");
+        buff = String::from(buff.trim());
+        if buff.is_empty() {
+            break;
+        }
+        vector.push(buff);
+    }
+
+}
+
+pub fn write_json<T>(kana_table: &Vec<T>, item: ItemType)
+where T : Item + serde::Serialize,
+{
     let file = match item {
-        Item::Hira => File::create("items/hiragana.json").expect("failed to open hiragana file for writing"),
-        Item::Kata => File::create("items/katakana.json").expect("failed to open katakana file for writing"),
+        ItemType::Hira => File::create("items/hiragana.json").expect("failed to open hiragana file for writing"),
+        ItemType::Kata => File::create("items/katakana.json").expect("failed to open katakana file for writing"),
+        ItemType::Kanji => File::create("items/kanji.json").expect("failed to open kanji file for writing"),
     };
     let mut writer = BufWriter::new(file);
     serde_json::to_writer(&mut writer, kana_table).expect("failed to write to json");
 }
+
+//
+// pub fn json_in_kanji_dir() -> io::Result<Vec<String>> {
+//     let mut files = Vec::new();
+//     for entry in fs::read_dir("items/kanji")? {
+//         let entry = entry?;
+//         let path = entry.path();
+//         if path.is_file() {
+//             files.push(path.into_os_string().into_string().unwrap());
+//         }
+//     }
+//     Ok(files)
+// }

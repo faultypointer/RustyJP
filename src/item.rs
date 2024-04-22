@@ -19,10 +19,11 @@ pub struct Kanji {
     pub score: f64,
 }
 
-pub enum Item {
+
+pub enum ItemType {
     Hira,
     Kata,
-    // Kanji, TODO
+    Kanji,
 }
 
 impl Kana {
@@ -43,4 +44,11 @@ impl PartialOrd for Kana {
     }
 }
 
+
 impl Eq for Kana {}
+
+
+
+pub trait Item {}
+impl Item for Kana {}
+impl Item for Kanji {}
