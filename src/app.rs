@@ -9,7 +9,7 @@ pub enum AppState {
     Kana,
     KanaTest,
     Kanji,
-    // KanjiTest
+    KanjiTest
 }
 
 
@@ -46,7 +46,7 @@ impl App {
                         1 => self.state = AppState::Kana,
                         2 => self.state = AppState::KanaTest,
                         3 => self.state = AppState::Kanji,
-                        // 4 => todo!(),
+                        4 => self.state = AppState::KanjiTest,
                         0 => self.is_open = false,
                         _ => utils::invalid_input(),
                     }
@@ -93,10 +93,17 @@ impl App {
                             utils::add_kanji(&mut self.kanji);
                             utils::write_json(&self.kanji, ItemType::Kanji);
                         },
+                        4 => self.state = AppState::KanjiTest,
                         0 => self.state = AppState::Home,
                         _ => todo!(),
                     }
-                }, 
+                },
+                AppState::KanjiTest => {
+                    item_test::kanji_test(&mut self.kanji);
+                    utils::write_json(&self.kanji, ItemType::Kanji);
+                    utils::stall();
+                    self.state = AppState::Home;
+                },
             }
         }
     }

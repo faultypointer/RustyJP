@@ -46,6 +46,8 @@ pub fn kana_test_menu() {
     println!("0. Back");
 }
 
+
+
 pub fn kanji_menu() {
     clear().unwrap();
     println!("1. View Kanji");

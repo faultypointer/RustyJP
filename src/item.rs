@@ -9,7 +9,7 @@ pub struct Kana {
     kanatype: String,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug, Clone, PartialEq)]
 pub struct Kanji {
     pub kanji: String,
     pub onyomi: Vec<String>,
@@ -46,6 +46,22 @@ impl PartialOrd for Kana {
 
 
 impl Eq for Kana {}
+
+impl Ord for Kanji {
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.score.partial_cmp(&other.score).unwrap_or(Ordering::Equal)
+    }
+}
+
+impl PartialOrd for Kanji {
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
+
+impl Eq for Kanji {}
+
 
 
 
