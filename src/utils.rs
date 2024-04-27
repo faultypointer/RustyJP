@@ -136,6 +136,7 @@ pub fn input_test_size() -> u8 {
 
 pub fn add_kanji(kanji_table: &mut Vec<Kanji>) {
     // Kanji bn
+    loop { 
     let mut kanji = String::new();
     let mut on: Vec<String> = Vec::new();
     let mut kun: Vec<String> = Vec::new();
@@ -144,11 +145,14 @@ pub fn add_kanji(kanji_table: &mut Vec<Kanji>) {
     println!("Enter the kanji:");
     io::stdin().read_line(&mut kanji).expect("Error reading input");
     kanji = String::from(kanji.trim());
+    if kanji.is_empty() {
+        break;
+    }
     println!("Enter the onyomi readings");
     get_vec_string_input(&mut on);
     println!("Enter the kunyomi readings");
     get_vec_string_input(&mut kun);
-    println!("Enter the meaning readings");
+    println!("Enter the meanings");
     get_vec_string_input(&mut mean);
     println!("Enter the sentences with the kanji: ");
     get_vec_string_input(&mut sent);
@@ -160,7 +164,7 @@ pub fn add_kanji(kanji_table: &mut Vec<Kanji>) {
         sentences: sent,
         score: -10.0,
     });
-
+    }
 }
 
 fn get_vec_string_input(vector: &mut Vec<String>) {
