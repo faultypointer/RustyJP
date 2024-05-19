@@ -1,4 +1,4 @@
 # RustyJP
-A cli tool to learn japanese in terminal.
+A CLI tool to learn Japanese in terminal.
 
 
